@@ -1,0 +1,44 @@
+---
+#- name: create msyql docker-container
+#  shell: docker run --name mysql -e MYSQL_ROOT_PASSWORD="Neunn@123" -e MYSQL_ROOT_HOST="%" -e MYSQL_DATABASE="deploy" -p 3306:3306 -d 192.168.248.18:5000/ncloud/mysql mysqld --character-set-server=utf8
+#  tags: container
+
+- name: create mysql docker container
+  docker_container:
+    name: mysql
+    image: "{{ mysql_image }}"
+    detach: True
+    #interactive: True
+    #tty: True
+    pull: True
+    #network_mode: host
+    ports: 
+      - "3306:3306"
+    command: mysqld --character-set-server=utf8
+    env:
+      MYSQL_ROOT_PASSWORD: Neunn@123
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: deploy
+
+      #- name: create deploy docker-container
+      #shell: docker run -d --name deploy --link mysql:mysql -e SERVICE_PORT=8000 -p 8000:8000  deploy_image }}
+      #tags:
+      #- docker1
+
+- name: create deploy docker container
+  docker_container:
+    name: deploy
+    image: "{{ deploy_image }}"
+    detach: True
+    links:
+      - "mysql:mysql" 
+    #interactive: True
+    #tty: True
+    pull: True
+    #network_mode: container
+    ports: 
+      - "8000:8000"
+    env:
+      SERVICE_PORT: 8000
+  tags:
+    - docker1

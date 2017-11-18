@@ -1,0 +1,9 @@
+---
+#kolla_prepare
+harbor_ip: 192.168.248.18:5000
+
+#kolla_deploy
+#mysql_image: 192.168.248.18:5000/ncloud/mysql
+mysql_image: 192.168.248.18:5000/ncloud/mysql
+#deploy_image: 192.168.248.18:5000/ncloud/deploy
+deploy_image: 192.168.248.18:5000/ncloud/deploy

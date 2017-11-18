@@ -1,0 +1,133 @@
+---
+#######################################
+# copy python packages
+#######################################
+- name: tar python packages
+  unarchive:
+    src: dist-packages.tar.gz
+    dest: /usr/local/lib/python2.7/dist-packages
+  tags:
+    - archive
+
+#######################################
+# LOCAL SOURCE && INSTALL PIP
+#######################################
+#- name: update neunn_local_release
+#  copy: src=local.list dest=/etc/apt/sources.list
+
+- name: update apt-cache1
+  apt: update_cache=yes
+
+- name: update apt-cache2
+  shell: apt-get update
+
+- name: install python-pip package
+  apt: name={{ item }} state=present force=yes
+  with_items:
+    - python-pip
+
+- name: shutdown ufw
+  shell: ufw disable
+
+#######################################
+# Update Local PIP && update pip
+#######################################
+  #
+  #- name: update apt-cache2
+  #  shell: apt-get update
+  #
+  #- name: install python-pip package
+  #  apt: name={{ item }} state=present
+  #  with_items:
+  #    - python-pip
+  ##    - chrony
+  #
+  #- name: mkdir /root/.pip
+  #  file: path=/root/.pip state=directory
+  #
+  #- name: update pip.conf
+  #  template: src=pip.conf dest=/root/.pip/pip.conf
+
+#- name: update pip
+#  shell: pip install -U pip
+
+
+#######################
+#remove apparmor
+#######################
+- name: apparmor install?
+  shell: dpkg -s apparmor
+  register: apparmor_installed
+  failed_when: false
+
+- name: purge apparmor
+  apt: name=apparmor state=absent purge=yes
+
+
+###########################
+# INSTALL PACKAGES
+##########################
+- name: install dependent packages
+  apt: name={{ item }} state=present force=yes
+  with_items:
+    - python-dev
+    - libffi-dev
+    - gcc
+    - libssl-dev
+    - git
+    - apt-transport-https
+    - ca-certificates
+    - gdisk
+  tags:
+    - package
+
+- name: install linux-image-extra
+  shell: sudo apt-get install linux-image-extra-$(uname -r)
+  tags:
+    - package
+
+- name: pip install packages
+  pip:
+    name: "{{ item }}"
+  with_items:
+  #  - ansible
+  #  - kolla
+  #  - netifaces
+    - docker-py
+
+#########################
+#INSTALL DOCKER
+#########################
+- name: install docker-engine
+  apt: name=docker-engine state=present force=yes
+  tags:
+    - docker-engine
+
+- name: mkdir docker.service.d
+  file: path=/etc/systemd/system/docker.service.d recurse=yes state=directory
+  tags:
+    - docker-engine
+
+- name: copy kolla.conf
+  template: src=kolla.conf dest=/etc/systemd/system/docker.service.d/kolla.conf
+  tags:
+    - docker-engine
+
+- name: restart docker service
+  service: name=docker state=restarted
+  tags:
+    - docker-engine
+
+- name: Set mountinfo flag for neutron
+  shell: mount --make-shared /run
+  tags:
+    - docker-engine
+
+- name: registry images department
+  shell: echo 'DOCKER_OPTS="--insecure-registry {{ harbor_ip }}"' >> /etc/default/docker
+  tags:
+    - docker-registry
+- name: restart docker service
+  service: name=docker state=restarted
+  tags:
+    - docker-registry

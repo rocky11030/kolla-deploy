@@ -1,0 +1,9 @@
+[kolla_prepare]
+10.2.3.[101:110] ansible_ssh_user=root ansible_ssh_pass=Neunn2016
+
+[kolla_deploy]
+10.2.3.110 ansible_ssh_user=root ansible_ssh_pass=Neunn2016
+
+[total:children]
+kolla_prepare
+kolla_deploy

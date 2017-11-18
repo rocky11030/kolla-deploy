@@ -1,0 +1,28 @@
+---
+- name: destroy openstack 
+  shell: docker exec deploy kolla-ansible destroy -i /kolla-ansible/deploy-ui/AutoDeploy/scripts/conf/multinode --yes-i-really-really-mean-it
+  when: inventory_hostname in groups['kolla_deploy']
+
+- name: umount /dev/sd(b-g)1
+  shell: umount {{ item }}
+  with_items:
+    - /dev/sdb1
+    - /dev/sdc1
+    - /dev/sdd1
+    - /dev/sde1
+      #    - /dev/sdf1
+      #- /dev/sdg1
+  ignore_errors: True
+  when: inventory_hostname in groups['kolla_prepare']
+
+- name: format disk
+  shell: parted {{ item }} -s -- mklabel gpt mkpart KOLLA_CEPH_OSD_BOOTSTRAP 1 -1
+  with_items:
+    - /dev/sdb
+    - /dev/sdc
+    - /dev/sdd
+    - /dev/sde
+      #- /dev/sdf
+      #- /dev/sdg
+  ignore_errors: True
+  when: inventory_hostname in groups['kolla_prepare']

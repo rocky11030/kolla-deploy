@@ -1,0 +1,10 @@
+---
+#- include: test.yml
+- include: kolla_prepare.yml
+  when: inventory_hostname in groups['kolla_prepare']
+  tags:
+    - prepare
+- include: kolla_deploy.yml
+  when: "'kolla_deploy' in group_names"
+  tags:
+    - deploy
