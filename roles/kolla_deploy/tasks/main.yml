@@ -1,10 +1,15 @@
 ---
-#- include: test.yml
-- include: kolla_prepare.yml
-  when: inventory_hostname in groups['kolla_prepare']
+- import_tasks: kolla_prepare_online.yml
+  when: inventory_hostname in groups['kolla_prepare_online']
   tags:
-    - prepare
-- include: kolla_deploy.yml
+    - prepare_online
+
+- import_tasks: kolla_prepare_offline.yml
+  when: inventory_hostname in groups['kolla_prepare_offline']
+  tags:
+    - prepare_offline
+
+- import_tasks: kolla_deploy.yml
   when: "'kolla_deploy' in group_names"
   tags:
     - deploy

@@ -14,12 +14,14 @@
 #######################################
 #- name: update neunn_local_release
 #  copy: src=local.list dest=/etc/apt/sources.list
+- name: update resolv.conf
+  shell: echo 'nameserver 10.25.0.151' > /etc/resolv.conf
 
-- name: update apt-cache1
-  apt: update_cache=yes
-
-- name: update apt-cache2
-  shell: apt-get update
+#- name: update apt-cache1
+#  apt: update_cache=yes
+#
+#- name: update apt-cache2
+#  shell: apt-get update
 
 - name: install python-pip package
   apt: name={{ item }} state=present force=yes
@@ -28,6 +30,16 @@
 
 - name: shutdown ufw
   shell: ufw disable
+
+- name: mkdir /root/.pip
+  file: path=/root/.pip state=directory
+
+- name: update pip.conf
+  template: src=pip.conf dest=/root/.pip/pip.conf
+
+- name: update pip
+  shell: pip install -U pip==9.0.1
+
 
 #######################################
 # Update Local PIP && update pip
@@ -81,25 +93,42 @@
   tags:
     - package
 
+- name: install keyserver
+  shell: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
 - name: install linux-image-extra
   shell: sudo apt-get install linux-image-extra-$(uname -r)
   tags:
     - package
 
+- name: copy docker-key
+  copy: src=docker-key dest=/tmp
+
+- name:  add docker-key
+  shell: sudo apt-key add /tmp/docker-key
+
+- name: add-apt-repository
+  shell: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+- name: update source
+  shell: sudo apt-get update
+
+
 - name: pip install packages
   pip:
     name: "{{ item }}"
   with_items:
-  #  - ansible
+    - ansible
   #  - kolla
-  #  - netifaces
-    - docker-py
+    - netifaces
+    - docker-py=1.10.6
+    - IPy
 
 #########################
 #INSTALL DOCKER
 #########################
-- name: install docker-engine
-  apt: name=docker-engine state=present force=yes
+- name: install docker-ce
+  apt: name=docker-ce state=present force=yes
   tags:
     - docker-engine
 
@@ -123,11 +152,24 @@
   tags:
     - docker-engine
 
-- name: registry images department
-  shell: echo 'DOCKER_OPTS="--insecure-registry {{ harbor_ip }}"' >> /etc/default/docker
+- name: registry image department
+  lineinfile:
+    dest: /lib/systemd/system/docker.service
+    regexp: ^ExecStart=/usr/bin/dockerd -H fd://
+    line: 'ExecStart=/usr/bin/dockerd -H fd:// --insecure-registry 10.10.20.96'
   tags:
-    - docker-registry
+    - registry
+
+
+#- name: docker-ce以前版本需要这么注册镜像仓库
+#  shell: echo 'DOCKER_OPTS="--insecure-registry {{ harbor_ip }}"' >> /etc/default/docker
+
+
 - name: restart docker service
-  service: name=docker state=restarted
+  systemd:
+    name: docker
+    daemon_reload: yes
+    state: restarted
   tags:
-    - docker-registry
+    - registry
+
