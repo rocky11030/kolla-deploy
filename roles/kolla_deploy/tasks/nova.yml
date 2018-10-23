@@ -1,0 +1,15 @@
+---
+- name: copy nova.conf
+  template: src=nova.conf dest=/etc/kolla/nova-compute/nova.conf
+
+- name: restart nova_compute
+  shell: "docker restart nova_compute"
+
+- name: copy grub
+  copy: src=grub dest=/etc/default/grub
+
+- name: update kernel
+  command: update-grub
+
+#- name: reboot system
+#  shell: reboot

@@ -1,0 +1,33 @@
+---
+- name: install multipath
+  apt: name=multipath-tools state=present
+  tags:
+    - multipath
+- name: copy cinder.conf
+  template: src=cinder.conf dest=/etc/kolla/cinder-volume/cinder.conf
+
+- name: copy cinder_huawei_conf.xml
+  template: src=cinder_huawei_conf.xml dest=/etc/kolla/cinder-volume/cinder_huawei_conf.xml
+  
+- name: copy config.json
+  template: src=config.json dest=/etc/kolla/cinder-volume/config.json
+
+- name: restart cinder_volume
+  shell: "docker restart cinder_volume"
+  tags:
+    - restart
+
+- name: rm -rf iscsid.pid
+  shell: rm -rf /run/iscsid.pid
+  tags:
+    - iscsi
+
+- name: copy run_command
+  shell: docker exec -u 0 nova_compute /etc/init.d/open-iscsi start
+  tags:
+    - iscsi
+
+#- name: restart nova_compute docker
+#  shell: docker restart nova_compute
+#  tags:
+#    - iscsi

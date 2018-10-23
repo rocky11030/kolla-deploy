@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config>
+    <Storage>
+        <Product>18000</Product>
+        <Protocol>iSCSI</Protocol>
+        <ControllerIP0 />
+        <ControllerIP1 />
+        <RestURL>https://172.17.81.20:8088/deviceManager/rest/</RestURL>
+        <UserName>admin</UserName>
+        <UserPassword>Neunn2014@)!$</UserPassword>
+    </Storage>
+    <LUN>
+        <LUNType>Thin</LUNType>
+        <WriteType>1</WriteType>
+        <MirrorSwitch>0</MirrorSwitch>
+        <Prefetch Type="0" Value="0" />
+        <StoragePool>NL-SAS_StoragePool002</StoragePool>
+    </LUN>
+    <iSCSI>
+        <DefaultTargetIP>172.20.250.247</DefaultTargetIP>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d446" TargetPortGroup="neunngroup1"/>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d447" TargetPortGroup="neunngroup1"/>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d448" TargetPortGroup="neunngroup1"/>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d449" TargetPortGroup="neunngroup1"/>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d450" TargetPortGroup="neunngroup1"/>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d451" TargetPortGroup="neunngroup1"/>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d452" TargetPortGroup="neunngroup1"/>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d453" TargetPortGroup="neunngroup1"/>
+<Initiator Name="iqn.1993-08.org.debian:01:b057843d454" TargetPortGroup="neunngroup1"/>
+</iSCSI>
+<Host HostIP="172.20.67.4,172.27.67.4,172.28.67.4,172.29.67.4" OSType="Linux" />
+<Host HostIP="172.20.67.5,172.27.67.5,172.28.67.5,172.29.67.5" OSType="Linux" />
+<Host HostIP="172.20.67.6,172.27.67.6,172.28.67.6,172.29.67.6" OSType="Linux" />
+<Host HostIP="172.20.67.7,172.27.67.7,172.28.67.7,172.29.67.7" OSType="Linux" />
+<Host HostIP="172.20.67.8,172.27.67.8,172.28.67.8,172.29.67.8" OSType="Linux" />
+<Host HostIP="172.20.67.9,172.27.67.9,172.28.67.9,172.29.67.9" OSType="Linux" />
+<Host HostIP="172.20.67.10,172.27.67.10,172.28.67.10,172.29.67.10" OSType="Linux" />
+<Host HostIP="172.20.67.11,172.27.67.11,172.28.67.11,172.29.67.11" OSType="Linux" />
+<Host HostIP="172.20.67.12,172.27.67.12,172.28.67.12,172.29.67.12" OSType="Linux" />
+</config>

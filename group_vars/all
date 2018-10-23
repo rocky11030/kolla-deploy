@@ -1,9 +1,10 @@
 ---
 #kolla_prepare
 #harbor_ip: 10.60.255.153:5000
-harbor_ip: 10.10.20.96
+dns_ip: 114.114.114.114
+harbor_ip: 192.168.17.103:28080
 
 
 #kolla_deploy
-mysql_image: 10.10.20.96/ncloud/mysql
-deploy_image: 10.10.20.96/ncloud/deploy:3.0.0
+mysql_image: 192.168.17.103:28080/ncloud/mysql
+deploy_image: 192.168.17.103:28080/ncloud/deploy:latest

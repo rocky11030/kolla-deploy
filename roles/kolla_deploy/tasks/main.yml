@@ -13,3 +13,18 @@
   when: "'kolla_deploy' in group_names"
   tags:
     - deploy
+
+#- import_tasks: cinder.yml
+#  when: "'cinder' in group_names"
+#  tags:
+#    - cinder
+#
+#- import_tasks: docker0.yml
+#  when: "'cinder' in group_names"
+#  tags:
+#    - docker0
+#
+#- import_tasks: nova.yml
+#  when: "'cinder' in group_names"
+#  tags:
+#    - nova

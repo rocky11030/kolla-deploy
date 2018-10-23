@@ -2,26 +2,27 @@
 #######################################
 # copy python packages
 #######################################
-- name: tar python packages
-  unarchive:
-    src: dist-packages.tar.gz
-    dest: /usr/local/lib/python2.7/dist-packages
-  tags:
-    - archive
+#- name: tar python packages
+#  unarchive:
+#    src: dist-packages.tar.gz
+#    dest: /usr/local/lib/python2.7/dist-packages
+#  tags:
+#    - archive
 
 #######################################
 # LOCAL SOURCE && INSTALL PIP
 #######################################
-#- name: update neunn_local_release
-#  copy: src=local.list dest=/etc/apt/sources.list
-- name: update resolv.conf
-  shell: echo 'nameserver 10.25.0.151' > /etc/resolv.conf
+- name: update neunn_local_release
+  copy: src=local.list dest=/etc/apt/sources.list
 
-#- name: update apt-cache1
-#  apt: update_cache=yes
-#
-#- name: update apt-cache2
-#  shell: apt-get update
+- name: update resolv.conf
+  shell: echo 'nameserver {{ dns_ip }}' > /etc/resolv.conf
+
+- name: update apt-cache1
+  apt: update_cache=yes
+
+- name: update apt-cache2
+  shell: apt-get update
 
 - name: install python-pip package
   apt: name={{ item }} state=present force=yes
@@ -40,40 +41,16 @@
 - name: update pip
   shell: pip install -U pip==9.0.1
 
-
-#######################################
-# Update Local PIP && update pip
-#######################################
-  #
-  #- name: update apt-cache2
-  #  shell: apt-get update
-  #
-  #- name: install python-pip package
-  #  apt: name={{ item }} state=present
-  #  with_items:
-  #    - python-pip
-  ##    - chrony
-  #
-  #- name: mkdir /root/.pip
-  #  file: path=/root/.pip state=directory
-  #
-  #- name: update pip.conf
-  #  template: src=pip.conf dest=/root/.pip/pip.conf
-
-#- name: update pip
-#  shell: pip install -U pip
-
-
 #######################
 #remove apparmor
 #######################
-- name: apparmor install?
-  shell: dpkg -s apparmor
-  register: apparmor_installed
-  failed_when: false
-
-- name: purge apparmor
-  apt: name=apparmor state=absent purge=yes
+#- name: apparmor install?
+#  shell: dpkg -s apparmor
+#  register: apparmor_installed
+#  failed_when: false
+#
+#- name: purge apparmor
+#  apt: name=apparmor state=absent purge=yes
 
 
 ###########################
@@ -90,8 +67,9 @@
     - apt-transport-https
     - ca-certificates
     - gdisk
+    - openjdk-8-jdk
   tags:
-    - package
+    - jdk
 
 - name: install keyserver
   shell: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -113,6 +91,12 @@
 - name: update source
   shell: sudo apt-get update
 
+- name: pip install docker-py
+  pip:
+    name: docker-py
+    version: 1.10.6
+  tags:
+    - docker-py
 
 - name: pip install packages
   pip:
@@ -121,8 +105,9 @@
     - ansible
   #  - kolla
     - netifaces
-    - docker-py=1.10.6
     - IPy
+  tags:
+    - docker-py
 
 #########################
 #INSTALL DOCKER
@@ -156,7 +141,7 @@
   lineinfile:
     dest: /lib/systemd/system/docker.service
     regexp: ^ExecStart=/usr/bin/dockerd -H fd://
-    line: 'ExecStart=/usr/bin/dockerd -H fd:// --insecure-registry 10.10.20.96'
+    line: 'ExecStart=/usr/bin/dockerd -H fd:// --insecure-registry {{ harbor_ip }}'
   tags:
     - registry
 

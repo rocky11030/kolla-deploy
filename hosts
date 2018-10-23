@@ -1,14 +1,18 @@
 [kolla_prepare_online]
-#10.2.60.[1:2] ansible_ssh_user=root ansible_ssh_pass=Neunn2016
+#10.2.60.[1:2] ansible_ssh_user=root ansible_ssh_pass=***
+10.2.75.[1:3] ansible_ssh_user=root ansible_ssh_pass=***
 
 [kolla_prepare_offline]
-#10.2.60.[1:2] ansible_ssh_user=root ansible_ssh_pass=Neunn2016
+#10.2.60.[1:2] ansible_ssh_user=root ansible_ssh_pass=***
 
 [kolla_deploy]
-10.2.67.11 ansible_ssh_user=root ansible_ssh_pass=Aa@2017
+10.2.75.1 ansible_ssh_user=root ansible_ssh_pass=***
 
+[cinder]
+#10.2.67.[1:3] ansible_ssh_user=root ansible_ssh_pass=***
 
 [total:children]
 kolla_prepare_online
 kolla_prepare_offline
 kolla_deploy
+cinder

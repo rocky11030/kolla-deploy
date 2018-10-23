@@ -13,7 +13,7 @@
     pull: True
     #network_mode: host
     ports: 
-      - "3306:3306"
+      - "3307:3306"
     command: mysqld --character-set-server=utf8
     env:
       MYSQL_ROOT_PASSWORD: Neunn@123
@@ -24,6 +24,9 @@
       #shell: docker run -d --name deploy --link mysql:mysql -e SERVICE_PORT=8000 -p 8000:8000  deploy_image }}
       #tags:
       #- docker1
+
+- name: delay 15s
+  shell: sleep 15s
 
 - name: create deploy docker container
   docker_container:
@@ -37,7 +40,7 @@
     pull: True
     #network_mode: container
     ports: 
-      - "8000:8000"
+      - "8001:8000"
     env:
       SERVICE_PORT: 8000
   tags:

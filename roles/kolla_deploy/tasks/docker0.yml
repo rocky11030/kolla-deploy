@@ -1,0 +1,15 @@
+---
+- name: copy daemon.json
+  template: src=daemon.json dest=/etc/docker/daemon.json
+
+- name: restart docker
+  systemd:
+    name: docker
+    state: restarted
+  tags:
+    - restart
+
+- name: start osd
+  shell: docker start $(docker ps -a | grep Exited | awk '{print $1}')
+  tags:
+    - start_osd

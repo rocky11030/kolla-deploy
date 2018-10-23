@@ -1,0 +1,2 @@
+/etc/init.d/open-iscsi start
+nova-compute --config-file /etc/nova/nova.conf
